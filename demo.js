@@ -18,11 +18,15 @@ demoApp.controller('ToastrController', function ($scope) {
 	};
 });
 
-demoApp.controller('RestangularController', function ($scope, Restangular) {
+demoApp.controller('RestangularController', function ($scope, $q, Restangular) {
 	Restangular.setBaseUrl('https://api.github.com/');
 	Restangular.one('users', 'braidenjudd').get().then(function (account) {
 		$scope.email = account.email;
 		$scope.full_name = account.name;
+	});
+
+	getGithubStatsfunction(Restangular, $q, 'mgonto', 'restangular').then(function (github_data) {
+		$scope.github_data = github_data;
 	});
 });
 
@@ -90,3 +94,19 @@ demoApp.controller('FirebaseController', function ($scope, $firebase) {
 	var syncObject = sync.$asObject();
 	syncObject.$bindTo($scope, "firebase_data");
 });
+
+// helper functions
+var getGithubStatsfunction = function (Restangular, $q, org, repo) {
+	Restangular.setBaseUrl('https://api.github.com/');
+	var deferred = $q.defer();
+
+	Restangular.one('repos', org).one(repo).get().then(function (repo_details) {
+		deferred.resolve({
+			url: repo_details.html_url,
+			stars: repo_details.stargazers_count,
+			last: moment(repo_details.pushed_at).format('Do MMMM YYYY')
+		});
+	});
+
+	return deferred.promise;
+};
