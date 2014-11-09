@@ -1,0 +1,25 @@
+Conway's Law - Pete Hodgson - Dog's look like their owners
+
+THe shape of your teams inevitably shape the way your software is designed, and it is called a law as it is unavoidable. Pete likens it to gravity, weild it to your advantage rather than yeild to its limitations
+
+Embrace communication is hard between teams, and better within teams. 
+
+So you can structure you teams to mirror the ways you want your application to turn out.
+
+Big teams aligned along technical boundaries will not lead to a microservices architecture, small cross-functional teams will. 
+
+Teams should not rely on other services to be 'up' to continue to work, this probably means coupling has made it's way into the system. Once is production a well designed system should handle failure by default. Failure should be expected and engineered for. Cloud v Non-stop etc.
+
+Co-dependence v Independence
+
+Codependence describes the fact that everyone has to be in the office for the team to move forward on a project. This is fine within a single team as you have high bandwidth communication within the team. However this does not scale, so it can be replicated across an entire organisation. 
+
+This is related to wielding or yielding to conway's law, you can't expect high bandwidth to occur accross team boundaries. So you want teams to be independent from each other, teams should be able to work on their service in isolation from the rest of the organisation.
+
+
+Testing
+
+- Service owners create fake versions of the services they consume.
+- Fake services mean you are testing on your understanding of what the service you are consuming should do. Therefore at some point you do need to test against 'real' versions of the services you consume.
+- Contract driven tests can be the solution to this problem, service consumers write tests for the services they consume. They give these tests to the original service owners and this forms part of that services' test suite. This forms a contact between the service consumer and the service owners, as long as these tests pass the service owner can continue to iterate on their service.
+- These create documentation for the services
