@@ -61,7 +61,8 @@
 		```
 
 		<div ng-controller="LodashController">
-		<h3>Transforming '1,2,4,gGD,5,sdasd' and the result is... <span ng-bind="result" /></h3>
+			Transforming <b>'1,2,4,gGD,5,sdasd'</b> and the result is... <b><span ng-bind="result" /></b>		
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last" />
 		</div>
 		---
 
@@ -78,12 +79,14 @@
 		```
 
 		<div ng-controller="ToastrController">
-			<button type="button" ng-click="run()" class="btn btn-lg btn-default">Toast Me!</button>
+			<button type="button" ng-click="run()" class="btn btn-lg btn-primary">Toast Me!</button>
+
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
 		</div>
 
 		---
 
-		# 3. restangular
+		# 3. Restangular
 
 		### Example
 		```javascript
@@ -96,21 +99,27 @@
 			$scope.full_name = account.name;
 		});
 		```
+
 		<div ng-controller="RestangularController">
 			<b>Name: </b><span ng-bind="full_name"></span><br />
 			<b>Email: </b><span ng-bind="email"></span>
-		
-			<h3> Module Info </h3>
-			<b>URL:</b> <a ng-href="{{github_data.url}}"><span ng-bind="github_data.url"></span></a><br />
-			<b>GitHub Stars:</b> <span ng-bind="github_data.stars"></span><br /> 
-			<b>Last Commit:</b> <span ng-bind="github_data.last"></span>
-		</div>	
+
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last" />	
+		</div>
 		---
 
 		# 4. Chart JS
 
+		### Example
+		```javascript
+		var ctx = document.getElementById("myChart").getContext("2d");
+		var myLineChart = new Chart(ctx).Line(data); // data is a specifically formatted JS Object
+		```	
+
 		<div ng-controller="ChartJsController">
-			<canvas id="myChart" width="800" height="400" class="middle center"></canvas>
+			<canvas id="myChart" width="640" height="225"></canvas>
+
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
 		</div>
 
 		---
@@ -120,9 +129,7 @@
 		### Example
 
 		```javascript
-		var auth0 = new Auth0({
-			// some config
-		});
+		var auth0 = new Auth0({ // some config });
 
 		$scope.signin = function() {
 			auth0.login({ popup: true }, function(err, profile) {
@@ -145,9 +152,13 @@
 
 		### Benefits over the Standard Router
 
-		- One
-		- Two
-		- Three
+		- Drop in replacement for the angular router
+		- Use the URL as a state machine
+		- Decouple nested states, list -> detail -> edit
+
+		<div ng-controller="UIRouterController">
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
+		</div>
 
 		---
 
@@ -187,9 +198,7 @@
 			</div>
 		</nav>
 
-		<div class="page-header">
-			<h1>Buttons</h1>
-		</div>
+		<h3>Example</h3>
 		<p>
 			<button type="button" class="btn btn-lg btn-default">Default</button>
 			<button type="button" class="btn btn-lg btn-primary">Primary</button>
@@ -200,9 +209,6 @@
 			<button type="button" class="btn btn-lg btn-link">Link</button>
 		</p>
 
-		<div class="page-header">
-			<h1>Tables</h1>
-		</div>
 		<div class="row">
 			<div class="col-md-12">
 				<table class="table">
@@ -238,6 +244,10 @@
 			</div>
 		</div>
 
+		<div ng-controller="BootstrapController">
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
+		</div>
+
 		---
 
 		# 8. Moment JS
@@ -246,17 +256,19 @@
 		```javascript
 		$scope.time1 = moment().format('MMMM Do YYYY, h:mm:ss a');
 		$scope.time2 = moment().format('dddd');
-		$scope.time3 = moment().format("MMM Do YY");
+		$scope.time3 = moment().format('MMM Do YY');
 		$scope.time4 = moment().format('YYYY [escaped] YYYY');
-		$scope.time5 = moment().format();
+		$scope.time5 = moment().fromNow();
 		```
 
 		<div ng-controller="MomentJsController">
-			<b>Time 1: </b><span ng-bind="time1"></span><br />
-			<b>Time 2: </b><span ng-bind="time2"></span><br />
-			<b>Time 3: </b><span ng-bind="time3"></span><br />
-			<b>Time 4: </b><span ng-bind="time4"></span><br />
-			<b>Time 5: </b><span ng-bind="time5"></span><br />
+			<b>'MMMM Do YYYY, h:mm:ss a': </b><span ng-bind="time1"></span><br />
+			<b>'dddd': </b><span ng-bind="time2"></span><br />
+			<b>'MMM Do YY': </b><span ng-bind="time3"></span><br />
+			<b>'YYYY [escaped] YYYY': </b><span ng-bind="time4"></span><br />
+			<b>'fromNow()': </b><span ng-bind="time5"></span><br />
+
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
 		</div>
 
 		---
@@ -270,23 +282,32 @@
 		// create an AngularFire reference to the data
 		var sync = $firebase(ref);
 
-		// download the data into a local object
-		var syncObject = sync.$asObject();
-		
-		// bind to an object on the scope
-		syncObject.$bindTo($scope, "firebase_data");	
+		// download the data into a local object and bind to scope
+		sync.$asObject().$bindTo($scope, "fruit");	
 		```
 
+		<div ng-controller="Firebase2Controller">
+			<b>Controller 1: </b><input type="text" ng-model="fruit.$value" /><br />
+		</div>
+
 		<div ng-controller="FirebaseController">
-			<b>$scope.firebase_data.item1: </b><span ng-bind="firebase_data.item1"></span><br />
-			<b>$scope.firebase_data.item1: </b><span ng-bind="firebase_data.item2"></span><br />
-			<b>$scope.firebase_data.item1: </b><span ng-bind="firebase_data.item3"></span><br />
-			<b>$scope.firebase_data.item1: </b><span ng-bind="firebase_data.item4"></span><br />	
+			<b>Controller 2: </b><input type="text" ng-model="fruit.$value" /><br />
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
 		</div>
 
 		---
 
-		# 10. ionicframework
+		# 10. Ionic
+
+		### Benefits over the Standard Router
+
+		- Perk 1
+		- Perk 2
+		- Perk 3
+
+		<div ng-controller="IonicController">
+			<github-stats url="github_data.url" stars="github_data.stars" last="github_data.last"/>
+		</div>
 		</textarea>
 
 		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>

@@ -1,21 +1,29 @@
 var demoApp = angular.module('demoApp', ['restangular', 'firebase']);
 
-demoApp.controller('LodashController', function ($scope) {
+demoApp.controller('LodashController', function ($scope, $q, Restangular) {
     var start = '1,2,4,gGD,5,sdasd';
     $scope.result = _.chain(start.split(','))
         .filter(function (item) { return !isNaN(item); })
         .map(function (item) { return item * 2; })
         .reduce(function (acc, item) { return acc + item; })
         .value();
+
+    getGithubStatsfunction(Restangular, $q, 'lodash', 'lodash').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
 });
 
-demoApp.controller('ToastrController', function ($scope) {
+demoApp.controller('ToastrController', function ($scope, $q, Restangular) {
 	$scope.run = function () {
 		toastr.info('This is some information');
 		toastr.success('Great Success!');
 		toastr.warning('Warning! Go Back!');
 		toastr.error('Gah! There has been an error');
 	};
+
+	getGithubStatsfunction(Restangular, $q, 'CodeSeven', 'toastr').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
 });
 
 demoApp.controller('RestangularController', function ($scope, $q, Restangular) {
@@ -30,7 +38,7 @@ demoApp.controller('RestangularController', function ($scope, $q, Restangular) {
 	});
 });
 
-demoApp.controller('ChartJsController', function ($scope) {
+demoApp.controller('ChartJsController', function ($scope, $q, Restangular) {
 	var ctx = document.getElementById("myChart").getContext("2d");
 
 	var data = {
@@ -60,9 +68,19 @@ demoApp.controller('ChartJsController', function ($scope) {
 	};
 
 	var myLineChart = new Chart(ctx).Line(data);
+
+	getGithubStatsfunction(Restangular, $q, 'nnnick', 'Chart.js').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
 });
 
-demoApp.controller('Auth0Controller', function ($scope) {
+demoApp.controller('UIRouterController', function ($scope, $q, Restangular) {
+	getGithubStatsfunction(Restangular, $q, 'angular-ui', 'ui-router').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
+});
+
+demoApp.controller('Auth0Controller', function ($scope, $q, Restangular) {
 	var auth0 = new Auth0({
 		domain:       'pragmaticyclist.auth0.com',
 		clientID:     'eBR1Gt2LSsqdwOkhXtBdhdOtwbVD2njH',
@@ -76,23 +94,68 @@ demoApp.controller('Auth0Controller', function ($scope) {
 			$scope.$digest();
 		});
 	};
+
+	getGithubStatsfunction(Restangular, $q, 'auth0', 'auth0-angular').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
 });
 
-demoApp.controller('MomentJsController', function ($scope, $interval) {
+demoApp.controller('MomentJsController', function ($scope, $interval, $q, Restangular) {
 	$interval(function () {
 		$scope.time1 = moment().format('MMMM Do YYYY, h:mm:ss a');
 		$scope.time2 = moment().format('dddd');
 		$scope.time3 = moment().format("MMM Do YY");
 		$scope.time4 = moment().format('YYYY [escaped] YYYY');
-		$scope.time5 = moment().format();
+		$scope.time5 = moment().fromNow();
 	}, 1000);
+
+	getGithubStatsfunction(Restangular, $q, 'moment', 'moment').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
 });
 
-demoApp.controller('FirebaseController', function ($scope, $firebase) {
-	var ref = new Firebase("https://braiden.firebaseio.com/votes/test");
+demoApp.controller('FirebaseController', function ($scope, $firebase, $q, Restangular) {
+	var ref = new Firebase("https://braiden.firebaseio.com/votes/fruit");
 	var sync = $firebase(ref);
 	var syncObject = sync.$asObject();
-	syncObject.$bindTo($scope, "firebase_data");
+	syncObject.$bindTo($scope, "fruit");
+
+	getGithubStatsfunction(Restangular, $q, 'firebase', 'angularfire').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
+});
+
+demoApp.controller('Firebase2Controller', function ($scope, $firebase) {
+	var ref = new Firebase("https://braiden.firebaseio.com/votes/fruit");
+	var sync = $firebase(ref);
+	var syncObject = sync.$asObject();
+	syncObject.$bindTo($scope, "fruit");
+});
+
+demoApp.controller('BootstrapController', function ($scope, $q, Restangular) {
+	getGithubStatsfunction(Restangular, $q, 'twbs', 'bootstrap').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
+});
+
+demoApp.controller('IonicController', function ($scope, $q, Restangular) {
+	getGithubStatsfunction(Restangular, $q, 'driftyco', 'ionic').then(function (github_data) {
+		$scope.github_data = github_data;
+	});
+});
+
+// directives
+demoApp.directive('githubStats', function() {
+	return {
+		scope: {
+			url: '=url',
+        	stars: '=stars',
+        	last: '=last',
+        	data: '&data'
+      	},
+      	restrict: "E",
+		templateUrl: 'github-stats.html'
+	};
 });
 
 // helper functions
@@ -100,11 +163,12 @@ var getGithubStatsfunction = function (Restangular, $q, org, repo) {
 	Restangular.setBaseUrl('https://api.github.com/');
 	var deferred = $q.defer();
 
+	//Restangular.setDefaultHeaders ({'Authorization': 'Basic braidenjudd'}); 
 	Restangular.one('repos', org).one(repo).get().then(function (repo_details) {
 		deferred.resolve({
 			url: repo_details.html_url,
 			stars: repo_details.stargazers_count,
-			last: moment(repo_details.pushed_at).format('Do MMMM YYYY')
+			last: moment(repo_details.pushed_at).fromNow()
 		});
 	});
 
