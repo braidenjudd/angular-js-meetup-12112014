@@ -106,7 +106,7 @@ demoApp.controller('MomentJsController', function ($scope, $interval, $q, Restan
 		$scope.time2 = moment().format('dddd');
 		$scope.time3 = moment().format("MMM Do YY");
 		$scope.time4 = moment().format('YYYY [escaped] YYYY');
-		$scope.time5 = moment().fromNow();
+		$scope.time5 = moment('10/10/2014 06:00').fromNow();
 	}, 1000);
 
 	getGithubStatsfunction(Restangular, $q, 'moment', 'moment').then(function (github_data) {
